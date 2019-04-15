@@ -1,4 +1,5 @@
 # ERC721O
+[![CircleCI](https://circleci.com/gh/OpiumProtocol/erc721o.svg?style=svg)](https://circleci.com/gh/OpiumProtocol/erc721o)
 
 ERC721O is composable multiclass token standard
 
