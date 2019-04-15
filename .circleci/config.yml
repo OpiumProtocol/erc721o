@@ -1,9 +1,6 @@
 version: 2
 jobs:
   build:
-    branches:
-      only:
-        - dev
     working_directory: ~/erc721o
     docker:
       - image: circleci/node:8.9.4
