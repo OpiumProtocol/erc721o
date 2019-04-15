@@ -1,0 +1,11 @@
+# NodeJS
+node_modules/
+
+# Solidity
+build/
+coverage
+coverage.json
+
+# MacOS
+.DS_Store
+

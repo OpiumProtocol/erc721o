@@ -1,0 +1,22 @@
+{
+  "name": "erc721o",
+  "version": "1.0.0",
+  "description": "ERC721O - Opium position token standard",
+  "main": "index.js",
+  "scripts": {
+    "test": "truffle test --network test",
+    "compile": "truffle compile",
+    "coverage": "solidity-coverage",
+    "lint:solidity": "solhint \"contracts/**/*.sol\""
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "truffle": "^5.0.2",
+    "truffle-hdwallet-provider": "^1.0.5",
+    "solidity-coverage": "^0.5.11",
+    "solhint": "^2.0.0-alpha.3",
+    "openzeppelin-solidity": "^2.2.0-rc.1"
+  }
+}
