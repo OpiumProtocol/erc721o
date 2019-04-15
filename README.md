@@ -43,3 +43,7 @@ npm run coverage
 - [ ] Clean and refactor comments
 - [ ] Tests
 - [ ] ERC721O Interface ID
+
+# LICENSES
+
+Our implementation was inspired by [ERC721X](https://github.com/loomnetwork/erc721x)
