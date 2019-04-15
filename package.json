@@ -9,8 +9,8 @@
     "coverage": "solidity-coverage",
     "lint:solidity": "solhint \"contracts/**/*.sol\""
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Opium Protocol",
+  "license": "MIT",
   "dependencies": {},
   "devDependencies": {
     "truffle": "^5.0.2",
