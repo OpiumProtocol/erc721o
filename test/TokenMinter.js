@@ -20,9 +20,7 @@ contract('TokenMinter', accounts => {
         tokenMinter = await TokenMinter.deployed()
 
         // Prepare
-        const gas = await tokenMinter.mint.estimateGas(1, alice, 10, { from: owner })
         tokenMinter.mint(1, alice, 10, { from: owner })
-        console.log('Gas used during minting =', gas)
         tokenMinter.mint(2, alice, 20, { from: owner })
         tokenMinter.mint(3, alice, 30, { from: owner })
     })
@@ -43,8 +41,6 @@ contract('TokenMinter', accounts => {
 
     context('Transfer', () => {
         it('should successfully transfer single tokenId', async () => {
-            const gas = await tokenMinter.methods[transferFromFour].estimateGas(alice, bob, 1, 5, { from: alice })
-            console.log('Gas used during single transfer =', gas)
             await tokenMinter.methods[transferFromFour](alice, bob, 1, 5, { from: alice })
 
             const aliceBalance = await tokenMinter.balanceOf(alice, 1)
@@ -55,8 +51,6 @@ contract('TokenMinter', accounts => {
         })
 
         it('should successfully batch transfer', async () => {
-            const gas = await tokenMinter.methods[batchTransferFromFour].estimateGas(alice, charlie, [2, 3], [5, 5], { from: alice })
-            console.log('Gas used during batch transfer =', gas)
             await tokenMinter.methods[batchTransferFromFour](alice, charlie, [2, 3], [5, 5], { from: alice })
 
             const aliceBalanceTwo = await tokenMinter.balanceOf(alice, 2)
@@ -73,8 +67,6 @@ contract('TokenMinter', accounts => {
 
     context('Composition', () => {
         it('should successfully compose three tokenIds into one portfolio', async () => {
-            const gas = await tokenMinter.compose.estimateGas([1, 2, 3], [1, 1, 1], 5, { from: alice })
-            console.log('Gas used during composition =', gas)
             await tokenMinter.compose([1, 2, 3], [1, 1, 1], 5, { from: alice })
 
             portfolioIdOneOneOne = calculatePortfolioId([1, 2, 3], [1, 1, 1])
@@ -91,8 +83,6 @@ contract('TokenMinter', accounts => {
         })
 
         it('should successfully recompose three tokenIds with ratio 1:1:1 into ratio 1:2:3', async () => {
-            const gas = await tokenMinter.recompose.estimateGas(portfolioIdOneOneOne, [1, 2, 3], [1, 1, 1], [1, 2, 3], [1, 2, 3], 5, { from: alice })
-            console.log('Gas used during recomposition =', gas)
             await tokenMinter.recompose(portfolioIdOneOneOne, [1, 2, 3], [1, 1, 1], [1, 2, 3], [1, 2, 3], 5, { from: alice })
 
             portfolioIdOneTwoThree = calculatePortfolioId([1, 2, 3], [1, 2, 3])
@@ -111,8 +101,6 @@ contract('TokenMinter', accounts => {
         })
 
         it('should successfully decompose three tokenIds with ratio 1:2:3', async () => {
-            const gas = await tokenMinter.decompose.estimateGas(portfolioIdOneTwoThree, [1, 2, 3], [1, 2, 3], 5, { from: alice })
-            console.log('Gas used during decomposition =', gas)
             await tokenMinter.decompose(portfolioIdOneTwoThree, [1, 2, 3], [1, 2, 3], 5, { from: alice })
 
             const aliceBalanceOne = await tokenMinter.balanceOf(alice, 1)
@@ -138,8 +126,6 @@ contract('TokenMinter', accounts => {
                 await tokenMinter.mint(tokenId, charlie, 1)
             }
 
-            const gas = await tokenMinter.compose.estimateGas(tokenIds, tokenRatio, 1, { from: charlie })
-            console.log('Gas used during composition of 10 different tokenIds =', gas)
             await tokenMinter.compose(tokenIds, tokenRatio, 1, { from: charlie })
         })
 
@@ -155,8 +141,6 @@ contract('TokenMinter', accounts => {
                 await tokenMinter.mint(tokenId, charlie, 1)
             }
 
-            const gas = await tokenMinter.compose.estimateGas(tokenIds, tokenRatio, 1, { from: charlie })
-            console.log('Gas used during composition of 50 different tokenIds =', gas)
             await tokenMinter.compose(tokenIds, tokenRatio, 1, { from: charlie })
         })
 
@@ -172,8 +156,6 @@ contract('TokenMinter', accounts => {
                 await tokenMinter.mint(tokenId, charlie, 1)
             }
 
-            const gas = await tokenMinter.compose.estimateGas(tokenIds, tokenRatio, 1, { from: charlie })
-            console.log('Gas used during composition of 100 different tokenIds =', gas)
             await tokenMinter.compose(tokenIds, tokenRatio, 1, { from: charlie })
         })
     })

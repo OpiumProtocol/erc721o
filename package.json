@@ -13,10 +13,11 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "truffle": "^5.0.2",
-    "truffle-hdwallet-provider": "^1.0.5",
-    "solidity-coverage": "^0.5.11",
+    "eth-gas-reporter": "^0.1.12",
+    "openzeppelin-solidity": "^2.2.0-rc.1",
     "solhint": "^2.0.0-alpha.3",
-    "openzeppelin-solidity": "^2.2.0-rc.1"
+    "solidity-coverage": "^0.5.11",
+    "truffle": "^5.0.2",
+    "truffle-hdwallet-provider": "^1.0.5"
   }
 }
