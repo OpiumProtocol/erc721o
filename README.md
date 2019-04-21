@@ -1,7 +1,13 @@
-# ERC721o
+# ERC-721o: a token standard for financial derivatives
 [![CircleCI](https://circleci.com/gh/OpiumProtocol/erc721o.svg?style=svg)](https://circleci.com/gh/OpiumProtocol/erc721o)
 
-ERC721o is a composable multiclass token standard
+ERC-721o is a composable multiclass token standard
+
+A standard that enables all kinds of different non-interchangeable tokens, much like ERC-721, where each can be minted in any quantity, and is interchangeable with its “twins”.
+
+It can easily represent both exchange-traded and OTC derivatives, supports wraps and operations with portfolios and it is backwards compatible to ERC-721 so can be fitted into the existing ecosystem of DeFi projects as much as possible in a native manner.
+
+![ERC721 and ERC20 Representation](assets/erc721-20.jpeg)
 
 # Interface
 
