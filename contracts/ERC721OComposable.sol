@@ -12,6 +12,7 @@ contract ERC721OComposable is ERC721OMintable {
     require(_tokenIds.length == _tokenRatio.length, "TOKEN_MINTER:TOKEN_IDS_AND_RATIO_LENGTH_DOES_NOT_MATCH");
     require(_quantity > 0, "TOKEN_MINTER:WRONG_QUANTITY");
     require(_tokenIds.length > 0, "TOKEN_MINTER:WRONG_QUANTITY");
+    require(_tokenIds.isUnique(), "TOKEN_MINTER:TOKEN_IDS_NOT_UNIQUE");
 
     for (uint256 i = 0; i < _tokenIds.length; i++) {
       _burn(msg.sender, _tokenIds[i], _tokenRatio[i] * _quantity);
@@ -30,6 +31,7 @@ contract ERC721OComposable is ERC721OMintable {
     require(_tokenIds.length == _tokenRatio.length, "TOKEN_MINTER:TOKEN_IDS_AND_RATIO_LENGTH_DOES_NOT_MATCH");
     require(_quantity > 0, "TOKEN_MINTER:WRONG_QUANTITY");
     require(_tokenIds.length > 0, "TOKEN_MINTER:WRONG_QUANTITY");
+    require(_tokenIds.isUnique(), "TOKEN_MINTER:TOKEN_IDS_NOT_UNIQUE");
 
     uint256 portfolioId = uint256(keccak256(abi.encodePacked(
       _tokenIds,
@@ -57,6 +59,8 @@ contract ERC721OComposable is ERC721OMintable {
     require(_quantity > 0, "TOKEN_MINTER:WRONG_QUANTITY");
     require(_initialTokenIds.length > 0, "TOKEN_MINTER:WRONG_QUANTITY");
     require(_finalTokenIds.length > 0, "TOKEN_MINTER:WRONG_QUANTITY");
+    require(_initialTokenIds.isUnique(), "TOKEN_MINTER:TOKEN_IDS_NOT_UNIQUE");
+    require(_finalTokenIds.isUnique(), "TOKEN_MINTER:TOKEN_IDS_NOT_UNIQUE");
 
     uint256 oldPortfolioId = uint256(keccak256(abi.encodePacked(
       _initialTokenIds,
