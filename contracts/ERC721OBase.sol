@@ -1,7 +1,7 @@
 pragma solidity ^0.5.4;
 
-import "../node_modules/openzeppelin-solidity/contracts/introspection/ERC165.sol";
-import "../node_modules/openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
+import "openzeppelin-solidity/contracts/introspection/ERC165.sol";
+import "openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
 
 import "./Interfaces/IERC721O.sol";
 import "./Interfaces/IERC721OReceiver.sol";

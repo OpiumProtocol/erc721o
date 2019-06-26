@@ -1,7 +1,7 @@
 pragma solidity ^0.5.4;
 
-import "../node_modules/openzeppelin-solidity/contracts/utils/Address.sol";
-import "../node_modules/openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
+import "openzeppelin-solidity/contracts/utils/Address.sol";
+import "openzeppelin-solidity/contracts/utils/ReentrancyGuard.sol";
 
 import "./ERC721OBase.sol";
 
