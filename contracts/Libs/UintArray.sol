@@ -67,16 +67,16 @@ library UintArray {
   }
 
   function isUnique(uint256[] memory A) internal pure returns (bool) {
-        uint256 length = A.length;
+    uint256 length = A.length;
 
-        for (uint256 i = 0; i < length; i++) {
-            (uint256 idx, bool isIn) = indexOf(A, A[i]);
+    for (uint256 i = 0; i < length; i++) {
+      (uint256 idx, bool isIn) = indexOf(A, A[i]);
 
-            if (isIn && idx < i) {
-                return false;
-            }
-        }
-
-        return true;
+      if (isIn && idx < i) {
+        return false;
+      }
     }
+
+    return true;
+  }
 }
