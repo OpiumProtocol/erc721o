@@ -106,6 +106,7 @@ contract ERC721OTransferable is ERC721OBase, ReentrancyGuard {
     );
 
     emit Transfer(_from, _to, _tokenIds[0]);
+    emit TransferWithQuantity(_from, _to, _tokenIds[0], _amounts[0]);
 
     // Number of transfers to execute
     uint256 nTransfer = _tokenIds.length;
@@ -135,6 +136,7 @@ contract ERC721OTransferable is ERC721OBase, ReentrancyGuard {
       balTo = balTo.updateTokenBalance(index, _amounts[i], ObjectLib.Operations.ADD);
 
       emit Transfer(_from, _to, _tokenIds[i]);
+      emit TransferWithQuantity(_from, _to, _tokenIds[i], _amounts[i]);
     }
 
     // Update storage of the last bin visited
