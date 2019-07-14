@@ -9,7 +9,7 @@ library ObjectLib {
   enum Operations { ADD, SUB, REPLACE }
 
   // Constants regarding bin or chunk sizes for balance packing
-  uint256 constant TYPES_BITS_SIZE   = 16;                     // Max size of each object
+  uint256 constant TYPES_BITS_SIZE   = 32;                     // Max size of each object
   uint256 constant TYPES_PER_UINT256 = 256 / TYPES_BITS_SIZE; // Number of types per uint256
 
   //
