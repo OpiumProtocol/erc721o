@@ -96,6 +96,8 @@ contract ERC721OComposable is ERC721OMintable {
       uint256 index = removedIdsIdxs[i];
       _mint(_initialTokenIds[index], msg.sender, _initialTokenRatio[index] * _quantity);
     }
+
+    _finalTokenRatio;
   }
 
   function _addedIds(
@@ -111,6 +113,8 @@ contract ERC721OComposable is ERC721OMintable {
       uint256 index = addedIdsIdxs[i];
       _burn(msg.sender, _finalTokenIds[index], _finalTokenRatio[index] * _quantity);
     }
+
+    _initialTokenRatio;
   }
 
   function _keptIds(

@@ -1,6 +1,8 @@
 const TokenMinter = artifacts.require('TokenMinter')
 
+// Utils
 const { calculatePortfolioId } = require('./utils/positions')
+const permits = require('./utils/permits')
 
 contract('TokenMinter', accounts => {
     const owner = accounts[0]
@@ -15,6 +17,8 @@ contract('TokenMinter', accounts => {
     let transferFromFour = 'transferFrom(address,address,uint256,uint256)'
     let batchTransferFromFour = 'batchTransferFrom(address,address,uint256[],uint256[])'
 
+    let permitFactory
+
     before(async () => {
         // Deploy
         tokenMinter = await TokenMinter.deployed()
@@ -23,6 +27,8 @@ contract('TokenMinter', accounts => {
         tokenMinter.mint(1, alice, 10, { from: owner })
         tokenMinter.mint(2, alice, 20, { from: owner })
         tokenMinter.mint(3, alice, 30, { from: owner })
+
+        permitFactory = permit => permits.permitFactory({ permit, minter: tokenMinter })
     })
 
     context('Balance', () => {
@@ -157,6 +163,34 @@ contract('TokenMinter', accounts => {
             }
 
             await tokenMinter.compose(tokenIds, tokenRatio, 1, { from: charlie })
+        })
+    })
+
+    context('Approval', () => {
+        it('should revert unapproved transfer', async () => {
+            try {
+                await tokenMinter.methods[transferFromFour](alice, bob, 1, 5, { from: bob })
+                throw null
+            } catch (e) {
+                assert.ok(e.message.match(/Not approved/), 'Not approved')
+            }
+        })
+
+        it('should be able to approve by permit function and successfully do the transfer', async () => {
+            const permit = await permitFactory({
+                holder: alice,
+                spender: bob,
+                nonce: 0
+            })
+
+            await tokenMinter.permit(permit.holder, permit.spender, permit.nonce, permit.expiry, permit.allowed, permit.signature, { from: bob })
+            await tokenMinter.methods[transferFromFour](alice, bob, 1, 5, { from: bob })
+
+            const aliceBalance = await tokenMinter.balanceOf(alice, 1)
+            const bobBalance = await tokenMinter.balanceOf(bob, 1)
+
+            assert.equal(aliceBalance, 0, 'Alice balance is wrong')
+            assert.equal(bobBalance, 10, 'Bob balance is wrong')
         })
     })
 })

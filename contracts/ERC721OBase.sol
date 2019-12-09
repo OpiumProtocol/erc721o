@@ -36,8 +36,13 @@ contract ERC721OBase is IERC721O, ERC165, IERC721 {
   // Interface constants
   bytes4 internal constant INTERFACE_ID_ERC721O = 0x12345678;
 
-  // 
-  mapping (uint256 => bool) private registredPortfolioIds;
+  // EIP712 constants
+  bytes32 public DOMAIN_SEPARATOR;
+  bytes32 public PERMIT_TYPEHASH;
+
+  // mapping holds nonces for approval permissions
+  // nonces[holder] => nonce
+  mapping (address => uint) public nonces;
 
   modifier isOperatorOrOwner(address _from) {
     require((msg.sender == _from) || operators[_from][msg.sender], "msg.sender is neither _from nor operator");
@@ -46,6 +51,15 @@ contract ERC721OBase is IERC721O, ERC165, IERC721 {
 
   constructor() public {
     _registerInterface(INTERFACE_ID_ERC721O);
+    
+    // Calculate EIP712 constants
+    DOMAIN_SEPARATOR = keccak256(abi.encode(
+      keccak256("EIP712Domain(string name,string version,address verifyingContract)"),
+      keccak256(bytes("ERC721o")),
+      keccak256(bytes("1")),
+      address(this)
+    ));
+    PERMIT_TYPEHASH = keccak256("Permit(address holder,address spender,uint256 nonce,uint256 expiry,bool allowed)");
   }
 
   function implementsERC721O() public pure returns (bool) {
@@ -123,6 +137,64 @@ contract ERC721OBase is IERC721O, ERC165, IERC721 {
     // Update operator status
     operators[msg.sender][_operator] = _approved;
     emit ApprovalForAll(msg.sender, _operator, _approved);
+  }
+
+  /// @notice Approve for all by signature
+  function permit(address _holder, address _spender, uint256 _nonce, uint256 _expiry, bool _allowed, bytes calldata _signature) external {
+    // Calculate hash
+    bytes32 digest =
+      keccak256(abi.encodePacked(
+        "\x19\x01",
+        DOMAIN_SEPARATOR,
+        keccak256(abi.encode(
+          PERMIT_TYPEHASH,
+          _holder,
+          _spender,
+          _nonce,
+          _expiry,
+          _allowed
+        ))
+    ));
+
+    // Divide the signature in r, s and v variables
+    // ecrecover takes the signature parameters, and the only way to get them
+    // currently is to use assembly.
+    // solium-disable-next-line security/no-inline-assembly
+    bytes32 r;
+    bytes32 s;
+    uint8 v;
+
+    bytes memory signature = _signature;
+
+    assembly {
+      r := mload(add(signature, 32))
+      s := mload(add(signature, 64))
+      v := byte(0, mload(add(signature, 96)))
+    }
+
+    // Version of signature should be 27 or 28, but 0 and 1 are also possible versions
+    if (v < 27) {
+      v += 27;
+    }
+
+    address recoveredAddress;
+
+    // If the version is correct return the signer address
+    if (v != 27 && v != 28) {
+      recoveredAddress = address(0);
+    } else {
+      // solium-disable-next-line arg-overflow
+      recoveredAddress = ecrecover(digest, v, r, s);
+    }
+
+    require(_holder != address(0), "Holder can't be zero address");
+    require(_holder == recoveredAddress, "Signer address is invalid");
+    require(_expiry == 0 || now <= _expiry, "Permission expired");
+    require(_nonce == nonces[_holder]++, "Nonce is invalid");
+    
+    // Update operator status
+    operators[_holder][_spender] = _allowed;
+    emit ApprovalForAll(_holder, _spender, _allowed);
   }
 
   /**
