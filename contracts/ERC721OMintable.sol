@@ -16,8 +16,8 @@ contract ERC721OMintable is ERC721OTransferable {
     }
 
     _updateTokenBalance(_to, _tokenId, _supply, ObjectLib.Operations.ADD);
-    emit Transfer(address(this), _to, _tokenId);
-    emit TransferWithQuantity(address(this), _to, _tokenId, _supply);
+    emit Transfer(address(0), _to, _tokenId);
+    emit TransferWithQuantity(address(0), _to, _tokenId, _supply);
   }
 
   function _burn(address _tokenOwner, uint256 _tokenId, uint256 _quantity) internal {
@@ -25,8 +25,8 @@ contract ERC721OMintable is ERC721OTransferable {
     require(ownerBalance >= _quantity, "TOKEN_MINTER:NOT_ENOUGH_POSITIONS");
 
     _updateTokenBalance(_tokenOwner, _tokenId, _quantity, ObjectLib.Operations.SUB);
-    emit Transfer(_tokenOwner, address(this), _tokenId);
-    emit TransferWithQuantity(_tokenOwner, address(this), _tokenId, _quantity);
+    emit Transfer(_tokenOwner, address(0), _tokenId);
+    emit TransferWithQuantity(_tokenOwner, address(0), _tokenId, _quantity);
   }
 
   function _mint(address _buyer, address _seller, bytes32 _derivativeHash, uint256 _quantity) internal {
