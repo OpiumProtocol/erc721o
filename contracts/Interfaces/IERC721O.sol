@@ -29,7 +29,7 @@ contract IERC721O {
   // Fungible Unsafe Transfer
   function transfer(address _to, uint256 _tokenId, uint256 _quantity) public;
 
-  // Fungible Unstafe Transfer From
+  // Fungible Unsafe Transfer From
   function transferFrom(address _from, address _to, uint256 _tokenId, uint256 _quantity) public;
 
   // Fungible Safe Transfer From
@@ -43,7 +43,7 @@ contract IERC721O {
   // Fungible Unsafe Batch Transfer From
   function batchTransferFrom(address _from, address _to, uint256[] memory _tokenIds, uint256[] memory _amounts) public;
 
-  // Aprovals
+  // Approvals
   function setApprovalForAll(address _operator, bool _approved) public;
   function approve(address _to, uint256 _tokenId) public;
   function getApproved(uint256 _tokenId, address _tokenOwner) public view returns (address);
