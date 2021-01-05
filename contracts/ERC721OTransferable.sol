@@ -91,57 +91,28 @@ contract ERC721OTransferable is ERC721OBase, ReentrancyGuard {
   ) internal isOperatorOrOwner(_from) {
     // Requirements
     require(_tokenIds.length == _amounts.length, "Inconsistent array length between args");
-    require(_to != address(0), "Invalid recipient");
-
-    // Load first bin and index where the object balance exists
-    (uint256 bin, uint256 index) = ObjectLib.getTokenBinIndex(_tokenIds[0]);
-
-    // Balance for current bin in memory (initialized with first transfer)
-    // Written with bad library syntax instead of as below to bypass stack limit error
-    uint256 balFrom = ObjectLib.updateTokenBalance(
-      packedTokenBalance[_from][bin], index, _amounts[0], ObjectLib.Operations.SUB
-    );
-    uint256 balTo = ObjectLib.updateTokenBalance(
-      packedTokenBalance[_to][bin], index, _amounts[0], ObjectLib.Operations.ADD
-    );
-
-    emit Transfer(_from, _to, _tokenIds[0]);
-    emit TransferWithQuantity(_from, _to, _tokenIds[0], _amounts[0]);
+    require(_to != address(0), "Invalid to address");
 
     // Number of transfers to execute
     uint256 nTransfer = _tokenIds.length;
 
-    // Last bin updated
-    uint256 lastBin = bin;
-
-    for (uint256 i = 1; i < nTransfer; i++) {
-      (bin, index) = _tokenIds[i].getTokenBinIndex();
-
-      // If new bin
-      if (bin != lastBin) {
-        // Update storage balance of previous bin
-        packedTokenBalance[_from][lastBin] = balFrom;
-        packedTokenBalance[_to][lastBin] = balTo;
-
-        // Load current bin balance in memory
-        balFrom = packedTokenBalance[_from][bin];
-        balTo = packedTokenBalance[_to][bin];
-
-        // Bin will be the most recent bin
-        lastBin = bin;
+    // Don't do useless calculations
+    if (_from == _to) {
+      for (uint256 i = 0; i < nTransfer; i++) {
+        emit Transfer(_from, _to, _tokenIds[i]);
+        emit TransferWithQuantity(_from, _to, _tokenIds[i], _amounts[i]);
       }
+      return;
+    }
 
-      // Update memory balance
-      balFrom = balFrom.updateTokenBalance(index, _amounts[i], ObjectLib.Operations.SUB);
-      balTo = balTo.updateTokenBalance(index, _amounts[i], ObjectLib.Operations.ADD);
+    for (uint256 i = 0; i < nTransfer; i++) {
+      require(_amounts[i] <= balanceOf(_from, _tokenIds[i]), "Quantity greater than from balance");
+      _updateTokenBalance(_from, _tokenIds[i], _amounts[i], ObjectLib.Operations.SUB);
+      _updateTokenBalance(_to, _tokenIds[i], _amounts[i], ObjectLib.Operations.ADD);
 
       emit Transfer(_from, _to, _tokenIds[i]);
       emit TransferWithQuantity(_from, _to, _tokenIds[i], _amounts[i]);
     }
-
-    // Update storage of the last bin visited
-    packedTokenBalance[_from][bin] = balFrom;
-    packedTokenBalance[_to][bin] = balTo;
 
     // Emit batchTransfer event
     emit BatchTransfer(_from, _to, _tokenIds, _amounts);

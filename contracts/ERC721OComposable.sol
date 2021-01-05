@@ -1,5 +1,7 @@
 pragma solidity ^0.5.4;
 
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+
 import "./Libs/UintArray.sol";
 
 import "./ERC721OMintable.sol";
@@ -7,6 +9,7 @@ import "./ERC721OMintable.sol";
 contract ERC721OComposable is ERC721OMintable {
   // Libraries
   using UintArray for uint256[];
+  using SafeMath for uint256;
 
   function compose(uint256[] memory _tokenIds, uint256[] memory _tokenRatio, uint256 _quantity) public {
     require(_tokenIds.length == _tokenRatio.length, "TOKEN_MINTER:TOKEN_IDS_AND_RATIO_LENGTH_DOES_NOT_MATCH");
@@ -15,7 +18,7 @@ contract ERC721OComposable is ERC721OMintable {
     require(_tokenIds.isUnique(), "TOKEN_MINTER:TOKEN_IDS_NOT_UNIQUE");
 
     for (uint256 i = 0; i < _tokenIds.length; i++) {
-      _burn(msg.sender, _tokenIds[i], _tokenRatio[i] * _quantity);
+      _burn(msg.sender, _tokenIds[i], _tokenRatio[i].mul(_quantity));
     }
 
     uint256 portfolioId = uint256(keccak256(abi.encodePacked(
@@ -42,7 +45,7 @@ contract ERC721OComposable is ERC721OMintable {
     _burn(msg.sender, _portfolioId, _quantity);
 
     for (uint256 i = 0; i < _tokenIds.length; i++) {
-      _mint(_tokenIds[i], msg.sender, _tokenRatio[i] * _quantity);
+      _mint(_tokenIds[i], msg.sender, _tokenRatio[i].mul(_quantity));
     }
   }
 
@@ -94,7 +97,7 @@ contract ERC721OComposable is ERC721OMintable {
 
     for (uint256 i = 0; i < removedIds.length; i++) {
       uint256 index = removedIdsIdxs[i];
-      _mint(_initialTokenIds[index], msg.sender, _initialTokenRatio[index] * _quantity);
+      _mint(_initialTokenIds[index], msg.sender, _initialTokenRatio[index].mul(_quantity));
     }
 
     _finalTokenRatio;
@@ -111,7 +114,7 @@ contract ERC721OComposable is ERC721OMintable {
 
     for (uint256 i = 0; i < addedIds.length; i++) {
       uint256 index = addedIdsIdxs[i];
-      _burn(msg.sender, _finalTokenIds[index], _finalTokenRatio[index] * _quantity);
+      _burn(msg.sender, _finalTokenIds[index], _finalTokenRatio[index].mul(_quantity));
     }
 
     _initialTokenRatio;
@@ -132,10 +135,10 @@ contract ERC721OComposable is ERC721OMintable {
 
       if (_initialTokenRatio[initialIndex] > _finalTokenRatio[finalIndex]) {
         uint256 diff = _initialTokenRatio[initialIndex] - _finalTokenRatio[finalIndex];
-        _mint(_initialTokenIds[initialIndex], msg.sender, diff * _quantity);
+        _mint(_initialTokenIds[initialIndex], msg.sender, diff.mul(_quantity));
       } else if (_initialTokenRatio[initialIndex] < _finalTokenRatio[finalIndex]) {
         uint256 diff = _finalTokenRatio[finalIndex] - _initialTokenRatio[initialIndex];
-        _burn(msg.sender, _initialTokenIds[initialIndex], diff * _quantity);
+        _burn(msg.sender, _initialTokenIds[initialIndex], diff.mul(_quantity));
       }
     }
   }

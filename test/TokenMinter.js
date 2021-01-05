@@ -4,6 +4,8 @@ const TokenMinter = artifacts.require('TokenMinter')
 const { calculatePortfolioId } = require('./utils/positions')
 const permits = require('./utils/permits')
 
+const zeroAddress = '0x0000000000000000000000000000000000000000'
+
 contract('TokenMinter', accounts => {
     const owner = accounts[0]
     const alice = accounts[1]
@@ -46,6 +48,15 @@ contract('TokenMinter', accounts => {
     })
 
     context('Transfer', () => {
+        it('should revert transferFrom by not approved actor', async () => {
+            try {
+                await tokenMinter.methods[transferFromFour](alice, bob, 1, 5, { from: bob })
+                throw null
+            } catch (e) {
+                assert.ok(e.message.match(/Not approved/), 'Not approved')
+            }
+        })
+
         it('should successfully transfer single tokenId', async () => {
             await tokenMinter.methods[transferFromFour](alice, bob, 1, 5, { from: alice })
 
@@ -54,6 +65,15 @@ contract('TokenMinter', accounts => {
 
             assert.equal(aliceBalance, 5, 'Alice balance is wrong')
             assert.equal(bobBalance, 5, 'Bob balance is wrong')
+        })
+
+        it('should revert batchTransferFrom by not approved actor', async () => {
+            try {
+                await tokenMinter.methods[batchTransferFromFour](alice, charlie, [2, 3], [5, 5], { from: charlie })
+                throw null
+            } catch (e) {
+                assert.ok(e.message.match(/msg.sender is neither _from nor operator/), 'msg.sender is neither _from nor operator')
+            }
         })
 
         it('should successfully batch transfer', async () => {
@@ -69,6 +89,34 @@ contract('TokenMinter', accounts => {
             assert.equal(charlieBalanceTwo, 5, 'Charlie balance two is wrong')
             assert.equal(charlieBalanceThree, 5, 'Charlie balance three is wrong')
         })
+
+        it('should revert transfer to zero address', async () => {
+            await tokenMinter.mint(1337, alice, 10, { from: owner })
+
+            try {
+                await tokenMinter.methods[transferFromFour](alice, zeroAddress, 1337, 5, { from: alice })
+                throw null
+            } catch (e) {
+                assert.ok(e.message.match(/Invalid to address/), 'Invalid to address')
+            }
+
+            try {
+                await tokenMinter.methods[batchTransferFromFour](alice, zeroAddress, [1337], [5], { from: alice })
+                throw null
+            } catch (e) {
+                assert.ok(e.message.match(/Invalid to address/), 'Invalid to address')
+            }
+        })
+
+        it('should successfully transfer to itself', async () => {
+            await tokenMinter.methods[transferFromFour](alice, alice, 1337, 5, { from: alice })
+            const aliceBalance1337AfterOne = await tokenMinter.balanceOf(alice, 1337)
+            assert.equal(aliceBalance1337AfterOne, 10, 'Alice balance 1337 is wrong')
+
+            await tokenMinter.methods[batchTransferFromFour](alice, alice, [1337], [5], { from: alice })
+            const aliceBalance1337AfterTwo = await tokenMinter.balanceOf(alice, 1337)
+            assert.equal(aliceBalance1337AfterTwo, 10, 'Alice balance 1337 is wrong')
+          })
     })
 
     context('Composition', () => {
