@@ -9,6 +9,13 @@ It can easily represent both exchange-traded and OTC derivatives, supports wraps
 
 ![ERC721 and ERC20 Representation](assets/token-representation.png)
 
+
+## Audit
+
+Protocol was audited by:
+ - [SmartDec](https://smartdec.net/) and report can be found [here](https://github.com/OpiumProtocol/opium-contracts/blob/master/docs/audit/OpiumSmartDecSmartContractAudit.pdf)
+ - [MixBytes](https://mixbytes.io/) and report can be found [here](https://github.com/OpiumProtocol/opium-contracts/blob/master/docs/audit/OpiumNetworkProtocolAuditMixBytes.pdf)
+
 # Interface
 
 ```
